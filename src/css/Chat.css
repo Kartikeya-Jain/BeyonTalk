@@ -1,0 +1,128 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 0.7;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  height: 100vh;
+}
+
+.chat > .chat_header {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat_headerleft {
+  display: flex;
+  align-items: center;
+}
+
+.chat_headerleft > h5 {
+  margin-left: 15px;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.chatheader_right {
+  display: flex;
+  align-items: center;
+}
+
+.chatheader_right > .MuiSvgIcon-root {
+  color: rgb(197, 197, 197);
+  margin-right: 5px;
+  font-size: xx-large;
+  cursor: pointer;
+}
+
+.chatheader_right > .MuiSvgIcon-root:hover {
+  color: white;
+}
+
+.chat_body {
+  flex: 1;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.chat_body > .message_header {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.message_header > .MuiAvatar-root {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.message_header > h3 {
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.chat_body::-webkit-scrollbar {
+  display: none;
+}
+
+.chat_footer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.chat_footer > .MuiSvgIcon-root {
+  color: gray;
+  font-size: xx-large;
+  cursor: pointer;
+}
+
+.chat_footer > .MuiSvgIcon-root:hover {
+  color: yellow;
+  font-size: xx-large;
+}
+
+.chat_footer > form {
+  display: flex;
+  flex: 1;
+}
+.chat_footer > form > input {
+  margin-left: 10px;
+  background-color: rgb(70, 70, 70);
+  padding: 10px;
+  border-radius: 33px;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+}
+
+.chat_footer > form > button {
+  display: none;
+}
+
+.chat_footerIcons {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.chat_footerIcons > .MuiSvgIcon-root {
+  color: gray;
+  font-size: xx-large;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.chat_footerIcons > .MuiSvgIcon-root:hover {
+  color: rgb(0, 183, 255);
+}
+
+.chat_footer > form > input:focus {
+  border: 1px solid rgb(0, 183, 255);
+}
