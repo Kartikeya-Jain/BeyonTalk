@@ -2,6 +2,7 @@ import React from 'react'
 import '../css/Login.css'
 import { auth, provider } from '../firebase'
 import { signInWithPopup } from 'firebase/auth'
+import MessageLogo from '../assets/MessageLogo.png'
 function Login() {
   const signIn = () => {
     signInWithPopup(auth, provider)
@@ -16,8 +17,8 @@ function Login() {
     <div className='login'>
       <div className='login__logo'>
         <img
-          src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Signal-Logo.svg/150px-Signal-Logo.svg.png'
-          alt=''
+          src={MessageLogo}
+          alt='Message Logo'
         />
       </div>
       <h3> Welcome to beyonTalk ❤️</h3>

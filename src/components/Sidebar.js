@@ -27,19 +27,17 @@ function Sidebar() {
   const [imageInput, setImageInput] = useState(
     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Signal-Logo.svg/150px-Signal-Logo.svg.png'
   )
-  useEffect(() => {
-    const getChats = async () => {
-      const chatsRef = collection(db, 'chats')
-      const q = query(chatsRef)
-      const querySnapshot = await getDocs(q)
-      let data = []
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, chatName: doc.data() })
-      })
-      setChats(data)
-    }
-    getChats()
-  }, [])
+  const [searchText, setSearchText] = useState('')
+  const getChats = async () => {
+    const chatsRef = collection(db, 'chats')
+    const q = query(chatsRef)
+    const querySnapshot = await getDocs(q)
+    let data = []
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, chatName: doc.data() })
+    })
+    setChats(data)
+  }
   const addNewChat = () => {
     if (nameInput) {
       const addChat = async () => {
@@ -58,6 +56,21 @@ function Sidebar() {
     )
     setModal(false)
   }
+  useEffect(() => {
+    getChats()
+  }, [])
+
+  const searchHandler = (e) => {
+    setSearchText(e.target.value)
+    console.log(searchText)
+    if (searchText !== '') {
+      const filteredChats = chats.filter((chat) => {
+        return chat.chatName.chatName.startsWith(searchText.toLowerCase())
+      })
+      console.log(filteredChats)
+      // setChats(filteredChats)
+    }
+  }
   return (
     <div className='sidebar'>
       <div className='sidebar__header'>
@@ -74,6 +87,8 @@ function Sidebar() {
             type='text'
             placeholder='Search'
             style={{ color: '#f6f6f6' }}
+            value={searchText}
+            onChange={searchHandler}
           />
         </div>
         <Add
@@ -136,14 +151,16 @@ function Sidebar() {
         </Modal>
       </div>
       <div className='sidebar__chats'>
-        {chats.map(({ id, chatName }) => (
-          <SidebarChat
-            key={id}
-            id={id}
-            name={chatName.chatName}
-            chatImage={chatName.chatImage}
-          />
-        ))}
+        {chats &&
+          chats.length > 0 &&
+          chats.map(({ id, chatName }) => (
+            <SidebarChat
+              key={id}
+              id={id}
+              name={chatName.chatName}
+              chatImage={chatName.chatImage}
+            />
+          ))}
       </div>
       <div className='sidebar__notes'>
         <div className='sidebar__notesIcon'>
@@ -156,4 +173,3 @@ function Sidebar() {
 }
 
 export default Sidebar
-

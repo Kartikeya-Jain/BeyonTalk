@@ -124,6 +124,7 @@ function Chat() {
               timestamp={message.timestamp}
               sender={message.user.email}
               senderName={message.user.displayName}
+              chatId={chatId}
             />
           ))}
         </FlipMove>
