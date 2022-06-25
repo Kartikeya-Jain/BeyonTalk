@@ -28,7 +28,7 @@ function Sidebar() {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Signal-Logo.svg/150px-Signal-Logo.svg.png'
   )
   const [searchText, setSearchText] = useState('')
-  const getChats = async () => {
+  const getChats = async (searchText = '') => {
     const chatsRef = collection(db, 'chats')
     const q = query(chatsRef)
     const querySnapshot = await getDocs(q)
@@ -36,7 +36,16 @@ function Sidebar() {
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, chatName: doc.data() })
     })
-    setChats(data)
+    if (searchText !== '') {
+      const filteredChats = data.filter((chat) => {
+        return chat.chatName.chatName
+          .toLowerCase()
+          .startsWith(searchText.toLowerCase())
+      })
+      setChats(filteredChats)
+    } else {
+      setChats(data)
+    }
   }
   const addNewChat = () => {
     if (nameInput) {
@@ -57,20 +66,9 @@ function Sidebar() {
     setModal(false)
   }
   useEffect(() => {
-    getChats()
-  }, [])
+    getChats(searchText)
+  }, [searchText])
 
-  const searchHandler = (e) => {
-    setSearchText(e.target.value)
-    console.log(searchText)
-    if (searchText !== '') {
-      const filteredChats = chats.filter((chat) => {
-        return chat.chatName.chatName.startsWith(searchText.toLowerCase())
-      })
-      console.log(filteredChats)
-      // setChats(filteredChats)
-    }
-  }
   return (
     <div className='sidebar'>
       <div className='sidebar__header'>
@@ -88,7 +86,7 @@ function Sidebar() {
             placeholder='Search'
             style={{ color: '#f6f6f6' }}
             value={searchText}
-            onChange={searchHandler}
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
         <Add
