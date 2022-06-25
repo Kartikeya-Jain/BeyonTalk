@@ -80,7 +80,7 @@ const SidebarChats = forwardRef(({ id, name, chatImage }, ref) => {
     }
     getLastMessage()
   }, [id])
-  console.log(lastMessage)
+  // console.log(lastMessage)
   return (
     <div
       ref={ref}

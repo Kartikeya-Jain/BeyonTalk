@@ -1,18 +1,3 @@
-// import React from 'react'
-// import '../css/Message.css'
-// function Message() {
-//   return (
-//     <div className='message'>
-//       <div className="message__content">
-//         <span>User Name</span>
-//         <p>This message</p>
-//         <small>Timestamp</small>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Message
 import React, { forwardRef } from "react";
 import { useSelector } from "react-redux";
 import "../css/Message.css";

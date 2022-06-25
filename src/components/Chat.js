@@ -1,72 +1,15 @@
-// import React from 'react'
-// import '../css/Chat.css'
-// import StyleIcon from '@material-ui/icons/Style'
-// import SearchIcon from '@material-ui/icons/Search'
-// import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
-// import Message from './Message'
-// import { Add, EmojiEmotions, MicNone } from "@material-ui/icons";
-// import { Avatar } from '@material-ui/core'
-
-// function Chat() {
-//   return (
-//   <div className='chat'>
-//     <div className='chat__header'>
-//       <div className='chat__headerLeft'>
-//         <Avatar />
-//         <h5>Chat Name</h5>
-//       </div>
-//       <div className='chat__headerRight'>
-//         <SearchIcon />
-//         <MoreHorizIcon />
-//       </div>
-//     </div>
-//     <div className='chat__body'>
-//       <div className='message__header'>
-//         <Avatar />
-//         <h3> Chat Name </h3>
-//       </div>
-//       <Message />
-//       <Message />
-//       <Message />
-//       <Message />
-//     </div>
-//      <div className="class__footer">
-//          <EmojiEmotions />
-//          <form>
-//           <input
-//            placehoder = "Send a Message"
-//            type = "text"
-
-//           />
-//           <button
-//             type = "submit">
-//               Send
-
-//           </button>
-
-//           </form>
-//           <div className = "chat_footerIcons">
-//             <StyleIcon />
-//             <MicNone />
-//             <Add/>
-//           </div>
-
-//   </div>
-//   </div>
-//   )
-// }
-// export default Chat
 import React, { useEffect, useState } from 'react'
 import '../css/Chat.css'
 import StyleIcon from '@material-ui/icons/Style'
 import SearchIcon from '@material-ui/icons/Search'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import Message from './Message'
-import { Add, EmojiEmotions, MicNone } from '@material-ui/icons'
+import { EmojiEmotions, MicNone, SendSharp } from '@material-ui/icons'
 import { Avatar } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import db from '../firebase'
 import FlipMove from 'react-flip-move'
+import Picker, { SKIN_TONE_NEUTRAL } from 'emoji-picker-react'
 import {
   collection,
   addDoc,
@@ -75,6 +18,7 @@ import {
   getDocs,
   query,
   orderBy,
+  getDoc,
 } from 'firebase/firestore'
 
 import {
@@ -91,41 +35,67 @@ function Chat() {
   const chatId = useSelector(selectChatId)
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState([])
+  const [showEmojiSelector, setShowEmojiSelector] = useState(false)
+  const [chosenEmoji, setChosenEmoji] = useState(null)
+  // const [newMessage, setNewMessage] = useState({})
 
-  useEffect(() => {
-    const getMessages = async () => {
-      const chatsRef = collection(db, `chats/${chatId}/messages`)
-      const q = query(chatsRef, orderBy('timestamp', 'asc'))
-      const querySnapshot = await getDocs(q)
-      let data = []
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, message: doc.data() })
-      })
-      setMessages(data)
-    }
-    getMessages()
-  }, [chatId, messages])
-
-  // console.log(messages)
+  const onEmojiClick = (event, emojiObject) => {
+    event.preventDefault()
+    setChosenEmoji(emojiObject)
+    console.log(chosenEmoji)
+    const newInput = input + chosenEmoji.emoji
+    setInput(newInput)
+  }
+  const addMessage = async () => {
+    const docRef = await addDoc(collection(db, `chats/${chatId}/messages`), {
+      user: user,
+      message: input,
+      timestamp: serverTimestamp(),
+    })
+    console.log('Document written with ID: ', docRef.id)
+    getMessage(docRef.id)
+  }
 
   const handleMessage = (e) => {
     e.preventDefault()
     if (chatId) {
-      console.log(input)
-      const addMessage = async () => {
-        const docRef = await addDoc(
-          collection(db, `chats/${chatId}/messages`),
-          {
-            user: user,
-            message: input,
-            timestamp: serverTimestamp(),
-          }
-        )
-        console.log('Document written with ID: ', docRef.id)
-      }
       addMessage()
     }
     setInput('')
+  }
+  const getMessages = async () => {
+    const chatsRef = collection(db, `chats/${chatId}/messages`)
+    const q = query(chatsRef, orderBy('timestamp', 'asc'))
+    const querySnapshot = await getDocs(q)
+    let data = []
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, message: doc.data() })
+    })
+    setMessages(data)
+  }
+
+  const getMessage = async (id) => {
+    const msgRef = doc(db, `chats/${chatId}/messages/${id}`)
+    const msgSnapshot = await getDoc(msgRef)
+    console.log(msgSnapshot.data())
+    const newMessage = {
+      id,
+      message: msgSnapshot.data(),
+    }
+    setMessages((state) => [...state, newMessage])
+  }
+
+  useEffect(() => {
+    getMessages()
+    console.log(messages)
+  }, [chatId])
+
+  const handleEmojiPicker = () => {
+    if (showEmojiSelector === false) {
+      setShowEmojiSelector(true)
+    } else {
+      setShowEmojiSelector(false)
+    }
   }
 
   return (
@@ -159,7 +129,12 @@ function Chat() {
         </FlipMove>
       </div>
       <div className='chat_footer'>
-        <EmojiEmotions />
+        <EmojiEmotions onClick={handleEmojiPicker} />
+        {showEmojiSelector && (
+          <div>
+            <Picker onEmojiClick={onEmojiClick} skinTone={SKIN_TONE_NEUTRAL} />
+          </div>
+        )}
         <form>
           <input
             value={input}
@@ -175,7 +150,7 @@ function Chat() {
         <div className='chat_footerIcons'>
           <StyleIcon />
           <MicNone />
-          <Add />
+          <SendSharp onClick={handleMessage} />
         </div>
       </div>
     </div>
